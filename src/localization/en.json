@@ -1,0 +1,11 @@
+{
+  "Login": "Login",
+  "Register": "Register",
+  "Logout": "Logout",
+  "Username": "Username",
+  "Email": "Email",
+  "Birth Date": "Birth Date",
+  "Password": "Password",
+  "Confirm Password": "Confirm Password",
+  "Passwords must and should match": "Passwords must and should match"
+}

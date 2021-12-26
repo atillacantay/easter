@@ -1,14 +1,28 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { CreatePostRequest, GetPostRequest, Post } from "types/post";
 import { Status } from "types/redux";
+import { history } from "utils/history";
 import { postAPI } from "_firebase";
 
 export interface PostState {
-  creatingStatus: Status;
-  creatingError?: string;
+  post: Post;
+  status: {
+    createPost: Status;
+    getPost: Status;
+  };
+  error: {
+    createPost?: string;
+    getPost?: string;
+  };
 }
 
 const initialState: PostState = {
-  creatingStatus: Status.idle,
+  post: {} as Post,
+  status: {
+    createPost: Status.idle,
+    getPost: Status.idle,
+  },
+  error: {},
 };
 
 /**
@@ -16,13 +30,30 @@ const initialState: PostState = {
  */
 export const createPost = createAsyncThunk<
   undefined,
-  any,
+  CreatePostRequest,
   {
     rejectValue: string;
   }
 >("post/create", async (postData, thunkAPI) => {
   try {
-    await postAPI.create(postData);
+    const createdPost = await postAPI.create(postData);
+    if (createdPost) {
+      history.push(`/post/${createdPost.id}`);
+    }
+  } catch (err: any) {
+    return thunkAPI.rejectWithValue(err.message);
+  }
+});
+
+export const getPost = createAsyncThunk<
+  Post,
+  GetPostRequest,
+  {
+    rejectValue: string;
+  }
+>("post/get", async ({ id }, thunkAPI) => {
+  try {
+    return await postAPI.getById(id);
   } catch (err: any) {
     return thunkAPI.rejectWithValue(err.message);
   }
@@ -38,14 +69,25 @@ export const postSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(createPost.pending, (state, action) => {
-        state.creatingStatus = Status.loading;
+        state.status.createPost = Status.loading;
       })
       .addCase(createPost.fulfilled, (state, action) => {
-        state.creatingStatus = Status.succeeded;
+        state.status.createPost = Status.succeeded;
       })
       .addCase(createPost.rejected, (state, action) => {
-        state.creatingStatus = Status.failed;
-        state.creatingError = action.payload;
+        state.status.createPost = Status.failed;
+        state.error.createPost = action.payload;
+      })
+      .addCase(getPost.pending, (state, action) => {
+        state.status.getPost = Status.loading;
+      })
+      .addCase(getPost.fulfilled, (state, action) => {
+        state.status.getPost = Status.succeeded;
+        state.post = action.payload;
+      })
+      .addCase(getPost.rejected, (state, action) => {
+        state.status.getPost = Status.failed;
+        state.error.getPost = action.payload;
       });
   },
 });

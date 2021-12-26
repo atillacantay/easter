@@ -10,14 +10,30 @@ import i18n from "localization/i18n";
 
 export interface AuthState {
   user: CustomUser;
-  status: Status;
+  status: {
+    userInit: Status;
+    register: Status;
+    login: Status;
+    logout: Status;
+  };
+  error: {
+    userInit?: string;
+    register?: string;
+    login?: string;
+    logout?: string;
+  };
   isAuthenticated: boolean;
-  error?: string;
 }
 
 const initialState: AuthState = {
   user: {} as CustomUser,
-  status: Status.idle,
+  status: {
+    userInit: Status.idle,
+    register: Status.idle,
+    login: Status.idle,
+    logout: Status.idle,
+  },
+  error: {},
   isAuthenticated: false,
 };
 
@@ -60,6 +76,7 @@ export const setCurrentUser = createAsyncThunk<
   try {
     const userData = await userAPI.getUserData(uid);
     if (userData) {
+      history.push("/");
       return userData;
     } else {
       return thunkAPI.rejectWithValue(i18n.t("Couldn't fetch the user data"));
@@ -121,53 +138,48 @@ export const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(register.pending, (state, action) => {
-        state.status = Status.loading;
+        state.status.register = Status.loading;
       })
       .addCase(register.fulfilled, (state, action) => {
-        state.status = Status.succeeded;
-        state.isAuthenticated = true;
-        state.user = action.payload;
-        history.push("/");
+        state.status.register = Status.succeeded;
       })
       .addCase(register.rejected, (state, action) => {
-        state.status = Status.failed;
-        state.error = action.payload;
+        state.status.register = Status.failed;
+        state.error.register = action.payload;
       })
       .addCase(login.pending, (state, action) => {
-        state.status = Status.loading;
+        state.status.login = Status.loading;
       })
       .addCase(login.fulfilled, (state, action) => {
-        state.status = Status.succeeded;
-        history.push("/");
+        state.status.login = Status.succeeded;
       })
       .addCase(login.rejected, (state, action) => {
-        state.status = Status.failed;
-        state.error = action.payload;
+        state.status.login = Status.failed;
+        state.error.login = action.payload;
       })
       .addCase(logout.pending, (state, action) => {
-        state.status = Status.loading;
+        state.status.logout = Status.loading;
       })
       .addCase(logout.fulfilled, (state, action) => {
-        state.status = Status.succeeded;
+        state.status.logout = Status.succeeded;
         state.isAuthenticated = false;
         state.user = {} as CustomUser;
-        history.push("/");
       })
       .addCase(logout.rejected, (state, action) => {
-        state.status = Status.failed;
-        state.error = action.payload;
+        state.status.logout = Status.failed;
+        state.error.logout = action.payload;
       })
       .addCase(setCurrentUser.pending, (state, action) => {
-        state.status = Status.loading;
+        state.status.userInit = Status.loading;
       })
       .addCase(setCurrentUser.fulfilled, (state, action) => {
-        state.status = Status.succeeded;
+        state.status.userInit = Status.succeeded;
         state.isAuthenticated = true;
         state.user = action.payload;
       })
       .addCase(setCurrentUser.rejected, (state, action) => {
-        state.status = Status.failed;
-        state.error = action.payload;
+        state.status.userInit = Status.failed;
+        state.error.userInit = action.payload;
       });
   },
 });

@@ -8,5 +8,8 @@
   "Password": "Password",
   "Confirm Password": "Confirm Password",
   "Passwords must and should match": "Passwords must and should match",
-  "Couldn't fetch the user data": "Couldn't fetch the user data"
+  "Couldn't fetch the user data": "Couldn't fetch the user data",
+  "Create a post": "Create a post",
+  "Title": "Title",
+  "Create": "Create"
 }

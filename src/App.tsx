@@ -8,15 +8,16 @@ import { useAppDispatch } from "hooks/redux";
 import { auth } from "_firebase/init";
 import { setCurrentUser } from "_redux/features/authSlice";
 import { onAuthStateChanged } from "firebase/auth";
+import Post from "pages/Post";
 
 const App = () => {
   const dispatch = useAppDispatch();
 
   React.useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
       if (user) {
         const uid = user.uid;
-        dispatch(setCurrentUser({ uid }));
+        await dispatch(setCurrentUser({ uid }));
       }
     });
   }, [dispatch]);
@@ -27,6 +28,7 @@ const App = () => {
         <Route path="/" element={<Posts />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/post/:id" element={<Post />} />
       </Route>
       {/* <Route path="/app" element={<AppLayout />}>
       <Route

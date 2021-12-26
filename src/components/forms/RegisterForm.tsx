@@ -124,13 +124,13 @@ const RegisterForm = () => {
           />
         )}
       />
-      {status === Status.failed && error && (
-        <Typography color="red">{error}</Typography>
+      {status.register === Status.failed && error.register && (
+        <Typography color="red">{error.register}</Typography>
       )}
       <LoadingButton
         type="submit"
         variant="contained"
-        loading={status === Status.loading}
+        loading={status.register === Status.loading}
       >
         {t("Register")}
       </LoadingButton>

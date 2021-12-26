@@ -13,15 +13,20 @@ const RightFrame = styled("div")(({ theme }) => ({
 }));
 
 const DefaultLayout = () => (
-  <Container maxWidth="lg">
+  <Container id="container" maxWidth="lg">
     <Header />
-    <Content>
-      <Grid container>
-        <Grid item xs={3} sx={{ display: { xs: "none", sm: "block" } }}>
+    <Content id="content-container">
+      <Grid id="content-grid" container>
+        <Grid
+          id="content-grid-left"
+          item
+          xs={3}
+          sx={{ display: { xs: "none", sm: "block" } }}
+        >
           <Topics />
         </Grid>
-        <Grid item xs={9}>
-          <RightFrame>
+        <Grid id="content-grid-right" item xs={9}>
+          <RightFrame id="right-content">
             <Outlet />
           </RightFrame>
         </Grid>

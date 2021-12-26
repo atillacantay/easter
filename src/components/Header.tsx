@@ -28,7 +28,7 @@ const Header = () => {
   };
 
   return (
-    <HeaderWrapper>
+    <HeaderWrapper id="header">
       <AppHeader position="static" color="transparent">
         <Toolbar disableGutters>
           <IconButton component={Link} to="/">

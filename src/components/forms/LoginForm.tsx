@@ -69,13 +69,13 @@ const LoginForm = () => {
           />
         )}
       />
-      {status !== Status.loading && error && (
-        <Typography color="red">{error}</Typography>
+      {status.login !== Status.loading && error.login && (
+        <Typography color="red">{error.login}</Typography>
       )}
       <LoadingButton
         type="submit"
         variant="contained"
-        loading={status === Status.loading}
+        loading={status.login === Status.loading}
       >
         {t("Login")}
       </LoadingButton>

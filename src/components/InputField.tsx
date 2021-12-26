@@ -1,6 +1,7 @@
 import { styled, alpha } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import React from "react";
+import { UseFormRegisterReturn } from "react-hook-form";
 
 const Search = styled("div", {
   shouldForwardProp: (propName) => propName !== "clickable",
@@ -12,7 +13,6 @@ const Search = styled("div", {
   "&:hover": {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
-  marginRight: theme.spacing(2),
   marginLeft: 0,
   width: "100%",
   [theme.breakpoints.up("sm")]: {
@@ -24,19 +24,19 @@ const StyledInputBase = styled(InputBase, {
   shouldForwardProp: (propName) => propName !== "clickable",
 })<{ clickable?: boolean }>(({ theme, clickable }) => ({
   color: "inherit",
+  width: "100%",
   "& .MuiInputBase-input": {
     cursor: clickable ? "pointer" : "auto",
     padding: theme.spacing(1, 1, 1, 0),
     paddingLeft: `calc(1em + ${theme.spacing(1)})`,
     transition: theme.transitions.create("width"),
     width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "20ch",
-    },
   },
 }));
 
 interface InputFieldProps {
+  name?: string;
+  register?: UseFormRegisterReturn;
   placeholder: string;
   onChange?: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -45,6 +45,8 @@ interface InputFieldProps {
 }
 
 const InputField: React.FC<InputFieldProps> = ({
+  name,
+  register,
   placeholder,
   onClick,
   onChange,
@@ -52,6 +54,8 @@ const InputField: React.FC<InputFieldProps> = ({
   return (
     <Search onClick={onClick} clickable={Boolean(onClick)}>
       <StyledInputBase
+        name={name}
+        {...register}
         placeholder={placeholder}
         onChange={onChange}
         clickable={Boolean(onClick)}

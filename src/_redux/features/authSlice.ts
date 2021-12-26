@@ -76,7 +76,9 @@ export const setCurrentUser = createAsyncThunk<
   try {
     const userData = await userAPI.getUserData(uid);
     if (userData) {
-      history.push("/");
+      if (["/login", "/register"].includes(history.location.pathname)) {
+        history.push("/");
+      }
       return userData;
     } else {
       return thunkAPI.rejectWithValue(i18n.t("Couldn't fetch the user data"));

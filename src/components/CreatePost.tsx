@@ -1,37 +1,46 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import { LoadingButton } from "@mui/lab";
-import { styled } from "@mui/system";
+import { Box, Typography } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "hooks/redux";
-import MUIRichTextEditor, { TMUIRichTextEditorRef } from "mui-rte";
+import MUIRichTextEditor from "mui-rte";
 import React from "react";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { CreatePostFormData } from "types/forms/post";
 import { CreatePostRequest } from "types/post";
 import { Status } from "types/redux";
 import { createPost } from "_redux/features/postSlice";
 import InputField from "./InputField";
+import { convertToRaw } from "draft-js";
+import { createPostValidationSchema } from "validations/CreatePostValidationSchema";
 
-const CreateButton = styled(LoadingButton)(({ theme }) => ({
-  marginTop: theme.spacing(5),
-}));
+const defaultValues: CreatePostFormData = {
+  title: "",
+  content: "",
+};
 
 const CreatePost = () => {
   const { user } = useAppSelector((state) => state.auth);
   const { status, error } = useAppSelector((state) => state.post);
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
-  const [title, setTitle] = React.useState("");
-  const editorRef = React.useRef<TMUIRichTextEditorRef>(null);
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    setValue,
+  } = useForm({
+    mode: "onChange",
+    defaultValues,
+    resolver: yupResolver(createPostValidationSchema),
+  });
+
   const [editorOpen, setEditorOpen] = React.useState(false);
 
-  const onSubmit = () => {
-    if (editorRef.current) {
-      editorRef.current.save();
-    }
-  };
-
-  const handleSave = (content: string) => {
+  const onSubmit = async (formData: CreatePostFormData) => {
     const postData: CreatePostRequest = {
-      title,
-      content,
+      title: formData.title,
+      content: formData.content,
       owner: {
         id: user.uid,
         username: user.username,
@@ -45,15 +54,15 @@ const CreatePost = () => {
   return (
     <div>
       {editorOpen ? (
-        <div>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <InputField
+            name="title"
+            register={register("title")}
             placeholder={t("Title")}
-            onChange={(event) => setTitle(event.target.value)}
           />
+          <Box mb={1} />
           <MUIRichTextEditor
             label={t("Start typing...")}
-            onSave={handleSave}
-            ref={editorRef}
             controls={[
               "title",
               "bold",
@@ -66,15 +75,25 @@ const CreatePost = () => {
               "clear",
               "striketrough",
             ]}
+            onChange={(value) => {
+              const content = JSON.stringify(
+                convertToRaw(value.getCurrentContent())
+              );
+              setValue("content", content);
+            }}
           />
-          <CreateButton
-            onClick={onSubmit}
+          <Box mb={6} />
+          <Typography color="red">
+            {errors.title?.message || errors.content?.message}
+          </Typography>
+          <LoadingButton
+            type="submit"
             variant="contained"
             loading={status.createPost === Status.loading}
           >
             {t("Create")}
-          </CreateButton>
-        </div>
+          </LoadingButton>
+        </form>
       ) : (
         <InputField placeholder={t("Create a post")} onClick={toggleEditor} />
       )}

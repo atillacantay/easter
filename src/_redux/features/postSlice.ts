@@ -6,21 +6,26 @@ import { postAPI } from "_firebase";
 
 export interface PostState {
   post: Post;
+  posts: Post[];
   status: {
     createPost: Status;
     getPost: Status;
+    getPosts: Status;
   };
   error: {
     createPost?: string;
     getPost?: string;
+    getPosts?: string;
   };
 }
 
 const initialState: PostState = {
   post: {} as Post,
+  posts: [] as Post[],
   status: {
     createPost: Status.idle,
     getPost: Status.idle,
+    getPosts: Status.idle,
   },
   error: {},
 };
@@ -59,6 +64,21 @@ export const getPost = createAsyncThunk<
   }
 });
 
+export const getPosts = createAsyncThunk<
+  Post[],
+  undefined,
+  {
+    rejectValue: string;
+  }
+>("post/getAll", async (_, thunkAPI) => {
+  try {
+    const posts = await postAPI.getAll();
+    return posts;
+  } catch (err: any) {
+    return thunkAPI.rejectWithValue(err.message);
+  }
+});
+
 /**
  * Reducers
  */
@@ -88,6 +108,17 @@ export const postSlice = createSlice({
       .addCase(getPost.rejected, (state, action) => {
         state.status.getPost = Status.failed;
         state.error.getPost = action.payload;
+      })
+      .addCase(getPosts.pending, (state, action) => {
+        state.status.getPosts = Status.loading;
+      })
+      .addCase(getPosts.fulfilled, (state, action) => {
+        state.status.getPosts = Status.succeeded;
+        state.posts = action.payload;
+      })
+      .addCase(getPosts.rejected, (state, action) => {
+        state.status.getPosts = Status.failed;
+        state.error.getPosts = action.payload;
       });
   },
 });

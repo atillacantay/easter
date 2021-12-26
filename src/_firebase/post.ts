@@ -1,5 +1,12 @@
 import { db } from "./init";
-import { collection, doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  collection,
+  collectionGroup,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+} from "firebase/firestore";
 import { CreatePostRequest, Post } from "types/post";
 
 export const getById = async (id: string) => {
@@ -12,6 +19,11 @@ export const getById = async (id: string) => {
   } else {
     return {} as Post;
   }
+};
+
+export const getAll = async () => {
+  const querySnapshot = await getDocs(collectionGroup(db, "posts"));
+  return querySnapshot.docs.map((doc) => doc.data()) as Post[];
 };
 
 export const create = async (postData: CreatePostRequest) => {

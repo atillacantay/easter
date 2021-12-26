@@ -19,11 +19,20 @@ export const theme = Object.assign(defaultTheme, {
   overrides: {
     MUIRichTextEditor: {
       root: {
-        marginTop: 20,
-        width: "80%",
+        border: `1px solid ${defaultTheme.palette.grey[800]}`,
+        borderRadius: defaultTheme.shape.borderRadius,
+      },
+      container: {
+        marginTop: defaultTheme.spacing(0.5),
       },
       editor: {
-        borderBottom: "1px solid gray",
+        marginLeft: defaultTheme.spacing(1),
+      },
+      editorContainer: {
+        width: "auto",
+        cursor: "text",
+        margin: defaultTheme.spacing(1, 0, 0, 0),
+        padding: defaultTheme.spacing(0, 0, 1, 0),
       },
     },
   },

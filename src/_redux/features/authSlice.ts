@@ -9,14 +9,14 @@ import { authAPI, userAPI } from "_firebase";
 import i18n from "localization/i18n";
 
 export interface AuthState {
-  user: any;
+  user: CustomUser;
   status: Status;
   isAuthenticated: boolean;
   error?: string;
 }
 
 const initialState: AuthState = {
-  user: {},
+  user: {} as CustomUser,
   status: Status.idle,
   isAuthenticated: false,
 };
@@ -138,8 +138,6 @@ export const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.status = Status.succeeded;
-        state.isAuthenticated = true;
-        state.user = action.payload;
         history.push("/");
       })
       .addCase(login.rejected, (state, action) => {
@@ -152,7 +150,7 @@ export const authSlice = createSlice({
       .addCase(logout.fulfilled, (state, action) => {
         state.status = Status.succeeded;
         state.isAuthenticated = false;
-        state.user = {};
+        state.user = {} as CustomUser;
         history.push("/");
       })
       .addCase(logout.rejected, (state, action) => {

@@ -1,7 +1,7 @@
 import { Container, Grid } from "@mui/material";
 import { styled } from "@mui/system";
 import Header from "components/Header";
-import LeftBar from "components/LeftBar";
+import Topics from "components/Topics";
 import { Outlet } from "react-router-dom";
 
 const Content = styled(Container)(({ theme }) => ({
@@ -18,7 +18,7 @@ const DefaultLayout = () => (
     <Content>
       <Grid container>
         <Grid item xs={3} sx={{ display: { xs: "none", sm: "block" } }}>
-          <LeftBar />
+          <Topics />
         </Grid>
         <Grid item xs={9}>
           <RightFrame>

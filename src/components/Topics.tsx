@@ -1,14 +1,14 @@
 import { styled } from "@mui/system";
 import { useTranslation } from "react-i18next";
 
-const LeftBarWrapper = styled("div")(({ theme }) => ({
+const TopicsWrapper = styled("div")(({ theme }) => ({
   border: "1px solid red",
   height: "100%",
 }));
 
-const LeftBar = () => {
+const Topics = () => {
   const { t } = useTranslation();
 
-  return <LeftBarWrapper>topics</LeftBarWrapper>;
+  return <TopicsWrapper>topics</TopicsWrapper>;
 };
-export default LeftBar;
+export default Topics;

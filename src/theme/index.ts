@@ -1,6 +1,6 @@
 import { createTheme } from "@mui/material";
 
-export const theme = createTheme({
+const defaultTheme = createTheme({
   palette: {
     mode: "dark",
   },
@@ -10,6 +10,20 @@ export const theme = createTheme({
         root: {
           textTransform: "none",
         },
+      },
+    },
+  },
+});
+
+export const theme = Object.assign(defaultTheme, {
+  overrides: {
+    MUIRichTextEditor: {
+      root: {
+        marginTop: 20,
+        width: "80%",
+      },
+      editor: {
+        borderBottom: "1px solid gray",
       },
     },
   },

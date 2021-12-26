@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router";
 import DefaultLayout from "./layouts/default";
 import Register from "pages/Register";
 import Login from "pages/Login";
-import Topics from "pages/Topics";
+import Posts from "pages/Posts";
 import React from "react";
 import { useAppDispatch } from "hooks/redux";
 import { auth } from "_firebase/init";
@@ -24,7 +24,7 @@ const App = () => {
   return (
     <Routes>
       <Route path="/" element={<DefaultLayout />}>
-        <Route path="/" element={<Topics />} />
+        <Route path="/" element={<Posts />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
       </Route>

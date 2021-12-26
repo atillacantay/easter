@@ -9,11 +9,10 @@ import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import DatePicker from "@mui/lab/DatePicker";
 import PasswordField from "components/commons/PasswordField";
-import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { auth } from "_firebase/authentication";
 import { LoadingButton } from "@mui/lab";
-import { useNavigate } from "react-router";
-import React from "react";
+import { useAppDispatch, useAppSelector } from "hooks/redux";
+import { register } from "_redux/features/authSlice";
+import { Status } from "types/redux";
 
 const Form = styled("form")(({ theme }) => ({
   // no props
@@ -28,8 +27,8 @@ const defaultValues: RegisterFormData = {
 };
 
 const RegisterForm = () => {
-  const navigate = useNavigate();
-
+  const { status, error } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const {
     control,
@@ -41,19 +40,9 @@ const RegisterForm = () => {
     resolver: yupResolver(registerValidationSchema),
   });
 
-  const [createUserWithEmailAndPassword, user, loading, error] =
-    useCreateUserWithEmailAndPassword(auth);
-
-  const onSubmit = async (data: RegisterFormData) => {
-    const { email, password } = data;
-    await createUserWithEmailAndPassword(email, password);
+  const onSubmit = async (registerFormData: RegisterFormData) => {
+    await dispatch(register(registerFormData));
   };
-
-  React.useEffect(() => {
-    if (user) {
-      navigate("/");
-    }
-  }, [navigate, user]);
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
@@ -135,10 +124,14 @@ const RegisterForm = () => {
           />
         )}
       />
-      {!loading && error && (
-        <Typography color="red">{error.message}</Typography>
+      {status === Status.failed && error && (
+        <Typography color="red">{error}</Typography>
       )}
-      <LoadingButton type="submit" variant="contained" loading={loading}>
+      <LoadingButton
+        type="submit"
+        variant="contained"
+        loading={status === Status.loading}
+      >
         {t("Register")}
       </LoadingButton>
     </Form>

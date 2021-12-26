@@ -10,14 +10,18 @@ import i18n from "localization/i18n";
 import { I18nextProvider } from "react-i18next";
 import { BrowserRouter } from "components/BrowserRouter";
 import { history } from "utils/history";
+import { Provider } from "react-redux";
+import { store } from "_redux/store";
 
 ReactDOM.render(
   <React.StrictMode>
     <I18nextProvider i18n={i18n}>
       <ThemeProvider theme={theme}>
         <BrowserRouter history={history}>
-          <CssBaseline />
-          <App />
+          <Provider store={store}>
+            <CssBaseline />
+            <App />
+          </Provider>
         </BrowserRouter>
       </ThemeProvider>
     </I18nextProvider>

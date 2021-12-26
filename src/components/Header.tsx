@@ -4,11 +4,9 @@ import SearchBar from "./SearchBar";
 import DriveFileRenameOutlineRoundedIcon from "@mui/icons-material/DriveFileRenameOutlineRounded";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { auth } from "_firebase/authentication";
-import { useAuthState } from "react-firebase-hooks/auth";
 import React from "react";
-import { signOut } from "firebase/auth";
-import { useNavigate } from "react-router";
+import { useAppDispatch, useAppSelector } from "hooks/redux";
+import { logout } from "_redux/features/authSlice";
 
 const HeaderWrapper = styled("div")(({ theme }) => ({
   // no props
@@ -21,13 +19,12 @@ const AppHeader = styled(AppBar)(({ theme }) => ({
 const HeaderRight = styled("div")(({ theme }) => ({}));
 
 const Header = () => {
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const [user] = useAuthState(auth);
 
   const onLogoutClick = async () => {
-    await signOut(auth);
-    navigate('/');
+    await dispatch(logout());
   };
 
   return (
@@ -40,7 +37,7 @@ const Header = () => {
           <SearchBar />
           <Box flex={1} />
           <HeaderRight>
-            {!user ? (
+            {!isAuthenticated ? (
               <React.Fragment>
                 <Button component={Link} to="/login" color="inherit">
                   {t("Login")}

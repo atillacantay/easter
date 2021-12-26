@@ -5,12 +5,11 @@ import { useTranslation } from "react-i18next";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginValidationSchema } from "validations/LoginValidationSchema";
 import PasswordField from "components/commons/PasswordField";
-import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { LoginFormData } from "types/forms/login";
-import { auth } from "_firebase/authentication";
 import { LoadingButton } from "@mui/lab";
-import { useNavigate } from "react-router";
-import React from "react";
+import { useAppDispatch, useAppSelector } from "hooks/redux";
+import { login } from "_redux/features/authSlice";
+import { Status } from "types/redux";
 
 const Form = styled("form")(({ theme }) => ({
   // no props
@@ -22,8 +21,10 @@ const defaultValues: LoginFormData = {
 };
 
 const LoginForm = () => {
+  const { status, error } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
+
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const {
     control,
     formState: { errors },
@@ -34,19 +35,9 @@ const LoginForm = () => {
     resolver: yupResolver(loginValidationSchema),
   });
 
-  const [signInWithEmailAndPassword, user, loading, error] =
-    useSignInWithEmailAndPassword(auth);
-
-  const onSubmit = async (data: LoginFormData) => {
-    const { email, password } = data;
-    await signInWithEmailAndPassword(email, password);
+  const onSubmit = async (loginFormData: LoginFormData) => {
+    await dispatch(login(loginFormData));
   };
-
-  React.useEffect(() => {
-    if (user) {
-      navigate("/");
-    }
-  }, [navigate, user]);
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
@@ -78,10 +69,14 @@ const LoginForm = () => {
           />
         )}
       />
-      {!loading && error && (
-        <Typography color="red">{error.message}</Typography>
+      {status !== Status.loading && error && (
+        <Typography color="red">{error}</Typography>
       )}
-      <LoadingButton type="submit" variant="contained" loading={loading}>
+      <LoadingButton
+        type="submit"
+        variant="contained"
+        loading={status === Status.loading}
+      >
         {t("Login")}
       </LoadingButton>
     </Form>

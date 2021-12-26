@@ -2,13 +2,24 @@ import { Route, Routes } from "react-router";
 import DefaultLayout from "./layouts/default";
 import Register from "pages/Register";
 import Login from "pages/Login";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "_firebase/authentication";
 import Topics from "pages/Topics";
+import React from "react";
+import { useAppDispatch } from "hooks/redux";
+import { auth } from "_firebase/init";
+import { setCurrentUser } from "_redux/features/authSlice";
+import { onAuthStateChanged } from "firebase/auth";
 
 const App = () => {
-  const [user, loading, error] = useAuthState(auth);
-  if (loading) return null;
+  const dispatch = useAppDispatch();
+
+  React.useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        dispatch(setCurrentUser({ uid }));
+      }
+    });
+  }, [dispatch]);
 
   return (
     <Routes>

@@ -1,19 +1,32 @@
-import { app } from ".";
-import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
-export const auth = getAuth(app);
+import { auth } from "./init";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
+import { RegisterFormData } from "types/forms/register";
+import { LoginFormData } from "types/forms/login";
 
-export const login = () => {
-  try {
-    signInWithEmailAndPassword(auth, "test@test.com", "password");
-  } catch (error) {
-  } finally {
-  }
+export const register = async (registerFormData: RegisterFormData) => {
+  const { email, password } = registerFormData;
+  const userCrendential = await createUserWithEmailAndPassword(
+    auth,
+    email,
+    password
+  );
+  return userCrendential.user;
 };
 
-export const logout = () => {
-  try {
-    signOut(auth);
-  } catch (error) {
-  } finally {
-  }
+export const login = async (loginFormData: LoginFormData) => {
+  const { email, password } = loginFormData;
+  const userCrendential = await signInWithEmailAndPassword(
+    auth,
+    email,
+    password
+  );
+  return userCrendential.user;
+};
+
+export const logout = async () => {
+  await signOut(auth);
 };
